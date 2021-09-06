@@ -1,0 +1,37 @@
+// version=1, timezone='Australia/Sydney', voice='Polly.Emma'
+
+choose_date_tts =`
+(1s)
+Please enter the date you want to book an appointment. (200ms)
+Please enter in yyyymmdd 8 digits of date. (200ms)
+`;
+
+audio name='choose_date', tts=choose_date_tts;
+audio name='no_input', tts='no input detected.';
+audio name='wrong_option', tts='wrong option entered, bye bye.';
+ivr name='choose_date', audioRef='choose_date', audioNoInputRef='no_input', numDigits=8;
+
+play_ivr ref='choose_date', noInputCount=2, timeout='10';
+
+if !invalid_input_count {
+    invalid_input_count = 0;
+}
+
+dateValid = validate_date_format format='YYYYMMDD', value=GATHER_DIGITS;
+
+if !dateValid {
+    invalid_input_count = invalid_input_count + 1;
+    if invalid_input_count >=3 {
+        audio name='date_invalidate_bybye', tts='bye bye';
+        play_audio ref='date_invalidate_bybye';
+        hang_up;
+    }
+    audio name='date_not_valid', tts='The date you entered is not valid. please enter again.';
+    play_audio ref='date_not_valid';
+    redirect path='vaccine_choose_date.bus';
+} else {
+    bookingDate = GATHER_DIGITS;
+    redirect path='vaccine_by_date.bus';
+}
+
+
