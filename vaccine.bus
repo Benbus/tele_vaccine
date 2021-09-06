@@ -1,0 +1,42 @@
+// version=1, timezone='Australia/Sydney', voice='Polly.Emma'
+
+main_menu_tts =`
+(1s)
+Welcome to book the covid vaccination. (200ms)
+Please listen carefully the following options.(200ms)
+
+Press 1 if you want to book as soon as possible(200ms)
+Press 2 to enter the date you wish to book(200ms)
+Press 3 to cancel a booking
+`;
+
+audio name='main_menu', tts=main_menu_tts;
+audio name='no_input', tts='no input detected.';
+audio name='no_match', tts='wrong option entered.';
+audio name='wrong_option', tts='wrong option entered, bye bye.';
+ivr name='main_menu', values=['1', '2', '3'], audioRef='main_menu', audioNoInputRef='no_input', audioNoMatchRef='no_match', numDigits=1;
+
+play_ivr ref='main_menu', noInputCount=2, noMatchCount=2, timeout='10';
+
+switch GATHER_DIGITS {
+    case '1' {
+        next_path = 'vaccine_asap.bus';
+        redirect path='vaccine_check_booking.bus';
+    }
+    case '2' {
+        next_path = 'vaccine_choose_date.bus';
+        redirect path='vaccine_check_booking.bus';
+    }
+    case '3' {
+        redirect path='vaccine_cancel.bus';
+    }
+    case '' {
+        play_audio ref='no_input';
+        hang_up;
+    }
+    default {
+        play_audio ref='wrong_option';
+        hang_up;
+    }
+}
+
