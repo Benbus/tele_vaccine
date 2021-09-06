@@ -1,0 +1,52 @@
+// version=1, timezone='Australia/Sydney', voice='Polly.Emma'
+
+
+plugin name='booking', command='details';
+
+if BOOKING_EVENT_ID {
+    booking_already  =`
+You had booked the %s.
+The time is %s [%s](say_as interpret-as="date" format="dmy") (200ms)
+Press 1 to confirm .
+Press 0 return to  the main_menu.
+`;
+    summary  =  BOOKING_SUMMARY;
+    startDate = format_date format='DD/MM/YYYY', value=BOOKING_START_TIME;
+    startTime = format_date format='hh:mm a', value=BOOKING_START_TIME;
+
+    booking_already = template format=booking_already, values=[summary,  startTime, startDate];
+    audio name='booking_already', tts=booking_already;
+   
+    audio name='no_input', tts='(1s) no input detected.';
+    audio name='no_match', tts='(1s) wrong option entered.';
+    audio name='wrong_option', tts='(1s) wrong option entered, bye bye.';
+
+    ivr name='booking_already', values=['0', '1'], audioRef='booking_already', audioNoInputRef='no_input', audioNoMatchRef='no_match', numDigits=1;
+
+    play_ivr ref='booking_already', noInputCount=2, noMatchCount=2, timeout='10';
+
+    switch GATHER_DIGITS {
+        case '1' {
+            plugin name='booking', command='cancel';
+            audio name='cancel_success', tts='cancel successfully';
+            play_audio ref='cancel_success';
+            hang_up;
+        }
+        case '0' {
+            redirect path='vaccine.bus';
+        }
+    
+        case '' {
+            play_audio ref='no_input';
+            hang_up;
+        }
+        default {
+            play_audio ref='wrong_option';
+            hang_up;
+        }
+    }
+}
+
+audio name='booking_not_found',  tts='booking is not found. return to the main menu';
+play_audio ref='booking_not_found';
+redirect path='vaccine.bus';
