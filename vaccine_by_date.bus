@@ -1,4 +1,4 @@
-\// version=1, timezone='Australia/Sydney', voice='Polly.Emma'
+// version=1, timezone='Australia/Sydney', voice='Polly.Emma'
 
 availabe_time_tts=`
 Press %s to booking at %s [%s](say_as interpret-as="date" format="dmy") (200ms).
