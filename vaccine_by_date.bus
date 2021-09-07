@@ -26,9 +26,9 @@ audio name='no_input', tts='(1s)no input detected.';
 audio name='booking_success', tts='Your booking is success. A SMS is sent to you. Thanks for the booking. Bye Bye.';
 audio name='booking_failed', tts='Your booking is failed. Please try again.';
 audio name='booking_menu', tts=booking_menu;
-ivr name='booking_menu', audioRef='booking_menu', audioNoInputRef='no_input';
+ivr name='booking_menu', audioRef='booking_menu', audioNoInputRef='no_input', values=['0','1','2','3','4','5','6','7','8','9'], numDigits=1;
 
-play_ivr ref='booking_menu', noInputCount=2, timeout='8', values=['0','1','2','3','4','5','6','7','8','9'], numDigits=1;
+play_ivr ref='booking_menu', noInputCount=2, timeout='8';
 
 if GATHER_DIGITS == '' {
     play_audio ref='no_input';
