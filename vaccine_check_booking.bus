@@ -5,14 +5,14 @@ plugin name='booking', command='details';
 
 if BOOKING_EVENT_ID {
     booking_already  =`
-You had booked the %s.
-The time is %s [%s](say_as interpret-as="date" format="dmy") (200ms)
+You had booked the {BOOKING_SUMMARY}.
+The time is {startTime} [{startDate}](say_as interpret-as="date" format="dmy") (200ms)
 `;
-    summary = BOOKING_SUMMARY;
+    
     startDate = format_date format='DD/MM/YYYY', value=BOOKING_START_TIME;
     startTime = format_date format='hh:mm a', value=BOOKING_START_TIME;
 
-    booking_already = template format=booking_already, values=[summary,  startTime, startDate];
+    booking_already = template text=booking_already;
     audio name='booking_already', tts=booking_already;
     play_audio ref='booking_already';
     next_path='vaccine.bus';
