@@ -31,7 +31,7 @@ if !dateValid {
     redirect path='vaccine_choose_date.bus';
 } else {
     bookingDate = GATHER_DIGITS;
-    redirect path='vaccine_by_date.bus';
+    redirect path='vaccine_reserve.bus';
 }
 
 
