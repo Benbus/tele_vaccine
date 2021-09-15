@@ -20,7 +20,7 @@ play_ivr ref='main_menu', noInputCount=2, noMatchCount=2, timeout='10';
 
 switch GATHER_DIGITS {
     case '1' {
-        next_path = 'vaccine_asap.bus';
+        next_path = 'vaccine_reserve.bus';
         redirect path='vaccine_check_booking.bus';
     }
     case '2' {
