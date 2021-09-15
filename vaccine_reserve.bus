@@ -1,0 +1,76 @@
+// version=1, timezone='Australia/Sydney', voice='Polly.Emma'
+
+
+
+booking_menu = 'Press 0 to listen this menu again. (200ms)';
+
+BOOKING_VACANCIES = '';
+
+if bookingDate {
+    plugin name='booking', command='enquire',maxResults=8, date=bookingDate;
+} else {
+    plugin name='booking', command='enquire',maxResults=8;
+}
+
+
+
+max_index = 0;
+loop BOOKING_VACANCIES {
+    max_index = BOOKING_VACANCIES_INDEX + 1;
+    startDate = format_date format='DD/MM/YYYY', value=BOOKING_VACANCIES_ITEM[1];
+    startTime = format_date format='hh:mm a', value=BOOKING_VACANCIES_ITEM[1];
+    vaccine_option = BOOKING_VACANCIES_INDEX + 1;
+    bookingItem = template text='Press {vaccine_option} to booking at {startTime} [{startDate}](say_as interpret-as="date" format="dmy") (200ms).';
+    booking_menu = booking_menu + bookingItem;
+}
+
+booking_menu = booking_menu + 'Press 9 to return to the manin menu. (200ms)';
+
+audio name='no_input', tts='(1s)no input detected.';
+
+audio name='booking_success', tts='Your booking is success. A SMS is sent to you. Thanks for the booking. Bye Bye.';
+audio name='booking_failed', tts='Your booking is failed. Please try again.';
+audio name='booking_menu', tts=booking_menu;
+ivr name='booking_menu', audioRef='booking_menu', audioNoInputRef='no_input', values=['0','1','2','3','4','5','6','7','8','9'], numDigits=1;
+
+play_ivr ref='booking_menu', noInputCount=2, timeout='8';
+
+if GATHER_DIGITS == '' {
+    play_audio ref='no_input';
+    hang_up;
+} elsif GATHER_DIGITS == '0' {
+    redirect path='vaccine_reserve.bus';
+} elsif GATHER_DIGITS == '9' {
+    redirect path='return_main_menu.bus';
+} else {
+    digit = number value=GATHER_DIGITS;
+
+    if  digit > max_index {
+        play_audio ref='no_match';
+        hang_up;
+    }
+    bookingItem = BOOKING_VACANCIES[digit - 1];
+    calendarId = bookingItem[0];
+    startTime =  bookingItem[1];
+    endTime = bookingItem[2];
+    bookingDate = format_date format='DD/MM/YYYY', value=startTime;
+    bookingTime = format_date format='hh:mm a', value=startTime;
+    summary = 'covid vaccination';
+    description =`
+Phone number:{FROM}
+Name:{contact_name}
+Vaccine: Covid Pfizer
+`;
+    contact_name=CONTACT[1];
+    description = template text=description;
+    plugin name='booking', command='reserve', phone=FROM, calendarId=calendarId, startTime=startTime, endTime=endTime, summary=summary, description=description;
+    if BOOKING_RESULT == 'OK' {
+        smsText = 'Dear {contact_name}, You booked Pfizer Vaccine time is {bookingTime} {bookingDate}, please come earlier in 10 minutes';
+        plugin name='sms', command='send', text=smsText, to=FROM;
+        play_audio ref='booking_success';
+        hang_up;
+    } else {
+        play_audio ref='booking_failed';
+        redirect path='vaccine_by_date.bus';
+    }
+}
