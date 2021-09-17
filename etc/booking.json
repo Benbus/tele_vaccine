@@ -1,0 +1,12 @@
+{
+    "bookings":[
+        {
+            "calendarId":"fb52jt5dg89qggk8lsum1rgaoc@group.calendar.google.com",
+            "schedule": "tom-jab.txt"
+        },
+        {
+            "calendarId":"a9ken5b4sp94bmt8vvplpqqels@group.calendar.google.com",
+            "schedule": "jerry-jab.txt"
+        }
+    ]
+}
