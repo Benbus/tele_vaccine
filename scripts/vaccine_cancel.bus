@@ -3,6 +3,10 @@
 
 plugin name='booking', command='details';
 
+if PLUGIN_STATUS != 'OK' {
+    redirect path='plugin_error.bus';
+}
+
 if BOOKING_EVENT_ID {
     booking_already  =`
 You had booked the {BOOKING_SUMMARY}.
