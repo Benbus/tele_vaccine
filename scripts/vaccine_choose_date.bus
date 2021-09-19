@@ -3,7 +3,7 @@
 choose_date_tts =`
 (1s)
 Please enter the date you want to book an appointment. (200ms)
-Please enter in yyyymmdd 8 digits of date. (200ms)
+the date format is in yyyymmdd 8 digits. (200ms)
 `;
 
 audio name='choose_date', tts=choose_date_tts;
