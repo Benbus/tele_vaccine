@@ -21,7 +21,7 @@ vacancy_count = array_length value=BOOKING_VACANCIES;
 if vacancy_count == 0 {
     audio name='no_vacancy', tts='no vacancy available. return to the main menu.';
     play_audio ref='no_vacancy';
-    
+    next_path='vaccine.bus';
     redirect path='return_main_menu.bus';
 }
 
