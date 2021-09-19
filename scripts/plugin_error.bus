@@ -1,0 +1,24 @@
+// version=1, timezone='Australia/Sydney', voice='Polly.Emma'
+
+return_main_menu =`
+(1s)
+Sorry there is an error. (200ms) 
+Press 1 to return to the main menu (200ms) or just hang up.
+`;
+
+audio name='return_main_menu', tts=return_main_menu;
+audio name='no_input', tts='no input detected.';
+audio name='no_match', tts='wrong option entered.';
+
+ivr name='return_main_menu', audioRef='return_main_menu', audioNoInputRef='no_input', audioNoMatchRef='no_match',  numDigits=1;
+play_ivr ref='return_main_menu', noInputCount=2, noMatchCount=2, timeout='10';
+
+if GATHER_DIGITS == '1' {
+    redirect_path = next_path;
+    next_path = '';
+    redirect path=redirect_path;
+} else {
+    audio name='bye_bye', tts='bye bye.';
+    play_audio ref='bye_bye';
+    hang_up;
+}
