@@ -33,5 +33,3 @@ if !dateValid {
     bookingDate = GATHER_DIGITS;
     redirect path='vaccine_reserve.bus';
 }
-
-
