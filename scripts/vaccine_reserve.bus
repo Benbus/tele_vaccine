@@ -4,7 +4,7 @@
 
 booking_menu = 'Press 0 to listen this menu again. (200ms)';
 
-BOOKING_VACANCIES = '';
+BOOKING_VACANCIES = [];
 
 if bookingDate {
     plugin name='booking', command='enquire',maxResults=8, date=bookingDate;
@@ -12,7 +12,18 @@ if bookingDate {
     plugin name='booking', command='enquire',maxResults=8;
 }
 
+if PLUGIN_STATUS != 'OK' {
+    redirect path='plugin_error.bus';
+}
 
+vacancy_count = array_length value=BOOKING_VACANCIES;
+
+if vacancy_count == 0 {
+    audio name='no_vacancy', tts='no vacancy available. return to the main menu.';
+    play_audio ref='no_vacancy';
+    
+    redirect path='return_main_menu.bus';
+}
 
 max_index = 0;
 loop BOOKING_VACANCIES {
@@ -23,6 +34,8 @@ loop BOOKING_VACANCIES {
     bookingItem = template text='Press {vaccine_option} to booking at {startTime} [{startDate}](say_as interpret-as="date" format="dmy") (200ms).';
     booking_menu = booking_menu + bookingItem;
 }
+
+
 
 booking_menu = booking_menu + 'Press 9 to return to the manin menu. (200ms)';
 
@@ -64,13 +77,20 @@ Vaccine: Covid Pfizer
     contact_name=CONTACT[1];
     description = template text=description;
     plugin name='booking', command='reserve', phone=FROM, calendarId=calendarId, startTime=startTime, endTime=endTime, summary=summary, description=description;
-    if BOOKING_RESULT == 'OK' {
-        smsText = 'Dear {contact_name}, You booked Pfizer Vaccine time is {bookingTime} {bookingDate}, please come earlier in 10 minutes';
-        plugin name='sms', command='send', text=smsText, to=FROM;
-        play_audio ref='booking_success';
-        hang_up;
-    } else {
-        play_audio ref='booking_failed';
-        redirect path='vaccine_by_date.bus';
+    
+    if PLUGIN_STATUS != 'OK' {
+        redirect path='plugin_error.bus';
     }
+
+    
+    smsText = 'Dear {contact_name}, You booked Pfizer Vaccine time is {bookingTime} {bookingDate}, please come earlier in 10 minutes';
+    plugin name='sms', command='send', text=smsText, to=FROM;
+        
+    if PLUGIN_STATUS != 'OK' {
+        redirect path='plugin_error.bus';
+    }
+
+    play_audio ref='booking_success';
+    hang_up;
+   
 }
