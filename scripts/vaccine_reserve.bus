@@ -69,12 +69,16 @@ if GATHER_DIGITS == '' {
     bookingDate = format_date format='DD/MM/YYYY', value=startTime;
     bookingTime = format_date format='hh:mm a', value=startTime;
     summary = 'covid vaccination';
+    contact_name = FROM;
+    if CONTACT {
+        contact_name = CONTACT[1];
+    }
+    
     description =`
 Phone number:{FROM}
 Name:{contact_name}
 Vaccine: Covid Pfizer
 `;
-    contact_name=CONTACT[1];
     description = template text=description;
     plugin name='booking', command='reserve', phone=FROM, calendarId=calendarId, startTime=startTime, endTime=endTime, summary=summary, description=description;
     
